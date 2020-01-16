@@ -11,8 +11,10 @@ Creating a tool that feature engineers additional data not provided by animal sh
 ## Data Sources
 
 [Petfinder](https://www.petfinder.com/)
+<img src="https://github.com/amp5/furever_match/blob/master/pictures/petfinder_logo.png">
 
 [Open Weather](https://openweathermap.org/)
+<img src="https://github.com/amp5/furever_match/blob/master/pictures/openweather-logo.png">
 
 ## Business Value
 
