@@ -2,7 +2,7 @@
 Data Engineering Batch processing project
 
 ## Project Idea
-Create a 
+Creating a tool that feature engineers additional data not provided by animal shelters on adoptable cats.
 
 ## Tech Stack
 
