@@ -6,15 +6,12 @@ Creating a tool that feature engineers additional data not provided by animal sh
 
 ## Tech Stack
 
-<img src="https://github.com/amp5/furever_match/blob/master/pictures/spark.png" width="100" height="100">   <img src="https://github.com/amp5/furever_match/blob/master/pictures/airflow.png" width="100" height="100">   <img src="https://github.com/amp5/furever_match/blob/master/pictures/flask.png" width="100" height="100">
+<img src="https://github.com/amp5/furever_match/blob/master/reports/pictures/spark.png" width="100" height="100">   <img src="https://github.com/amp5/furever_match/blob/master/reports/pictures/airflow.png" width="100" height="100">   <img src="https://github.com/amp5/furever_match/blob/master/reports/pictures/flask.png" width="100" height="100">
 
 ## Data Sources
+[<img src="https://github.com/amp5/furever_match/blob/master/reports/pictures/petfinder_logo.png">](https://www.petfinder.com/)
+[<img src="https://github.com/amp5/furever_match/blob/master/reports/pictures/openweather-logo.png">](https://openweathermap.org/)
 
-[Petfinder](https://www.petfinder.com/)
-<img src="https://github.com/amp5/furever_match/blob/master/pictures/petfinder_logo.png">
-
-[Open Weather](https://openweathermap.org/)
-<img src="https://github.com/amp5/furever_match/blob/master/pictures/openweather-logo.png">
 
 ## Business Value
 
