@@ -1,3 +1,6 @@
+## **1/22/20**
+API call was not efficient. refactored call by first calling API to identify zipcodes shelters are in for WA state. Then from that zipcode I call the API to find all adoptable cats within those zipcodes. 
+
 ## **1/17/20**
 
 Working on acquiring basic data sets. 
