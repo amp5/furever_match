@@ -1,7 +1,7 @@
 # copy local files into S3 bucket for spark master to access
 aws s3 cp /Users/alexandraplassaras/src/furever_match/src/import_data/import_petfinder.py s3://fureverdump/
 aws s3 cp /Users/alexandraplassaras/src/furever_match/src/postgres_setup/postgresql-42.2.9.jar s3://fureverdump/
-aws s3 cp /Users/alexandraplassaras/src/furever_match/spark/connect_to_s3.py s3://fureverdump/
+aws s3 cp /Users/alexandraplassaras/src/furever_match/src/connect_to_s3.py s3://fureverdump/
 
 
 # log into SSH
