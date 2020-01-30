@@ -80,16 +80,13 @@ list_o_files = ['2020-01-29_10573.json', '2020-01-29_10526.json',
 
 
 second_list = []
-for i in range(105):
+for i in range(400):
     filename = 'expected_output_' + str(i) + '.json'
-    print(filename)
     second_list.append(filename)
-
-print(second_list)
-
 new_list = list_o_files + second_list
 
-for num, file in enumerate(list_o_files, start = 105):
+
+for num, file in enumerate(list_o_files, start = 5317):
     print(num)
     print(file)
     generate(file, num)
