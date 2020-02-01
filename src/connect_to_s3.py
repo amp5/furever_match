@@ -4,34 +4,34 @@ from pyspark.sql import SparkSession
 from pyspark.sql.types import *
 from pyspark.sql import DataFrameWriter
 import json
+from write_to_postgres import write_to_psql
+from pyspark.sql import Row
+from pyspark.sql import SQLContext
+from pyspark import SparkContext
+import zlib
+from ast import literal_eval
+#yes
+from collections import ChainMap
+from pyspark.sql import Row
+from collections import OrderedDict
+from pyspark.sql.types import *
+import functools
+from pyspark.sql.functions import col, when
+from functools import reduce
 
 
-def read_s3(bucket, file_name):
-    s3 = boto3.client('s3')
-    obj = s3.get_object(Bucket=bucket, Key=file_name)
-
-    # this will change with real data
-    initial_df = pd.read_csv(obj['Body'],
-                             names=["first_name",
-                                    "last_name",
-                                    "street", "city",
-                                    "state", "zipcode"])
-    return initial_df
-
-
-i_df = read_s3('fureverdump', 'address.csv')
-
-######### new version #########
 key = 'expected_output_0.json'
-# key = '2020-01-28_97525.json'
 s3 = boto3.client('s3')
+
 obj = s3.get_object(Bucket='fureverdump', Key=key)
-
-
-
 text = obj["Body"].read().decode()
-json_text = json.loads(text)
 
+spark = SparkSession.builder \
+    .config("spark.driver.extraClassPath", "/postgresql-42.2.9.jar") \
+    .appName('furevermatch') \
+    .getOrCreate()
+
+sc = spark.sparkContext
 
 def find_values(id, json_repr):
     results = []
@@ -61,23 +61,51 @@ def breakup_json(json_file, key_list, col_list):
 
 
 def val_json(json_file, key_name):
-    dict_vs = {key_name: find_values(key_name, json_file)[0]}
-    return dict_vs
-
+    return_list = []
+    all_vals = find_values(key_name, json_file)
+    for val in all_vals:
+        pair = {key_name : val}
+        return_list.append(pair)
+    return return_list
 
 def nested_json(json_file, key_name, parent_name):
-    parent = find_values(parent_name, json_file)[0]
-    child_val = parent[key_name]
-    new_dict = {key_name: child_val}
-    return new_dict
+    parents = find_values(parent_name, json_file)
+    children_lst = []
+    for i in range(len(parents)):
+        if parent_name == 'breeds' or parent_name == 'colors':
+            parent = find_values(parent_name, json_file)[i]
+            child_val = parent[key_name]
+            new_name = parent_name + '_' + key_name
+            pair = {new_name: child_val}
+        else:
+            parent = find_values(parent_name, json_file)[i]
+            child_val = parent[key_name]
+            pair = {key_name : child_val}
+        children_lst.append(pair)
+    return children_lst
 
 
 def get_key(val):
     for key, value in my_dict.items():
         if val == value:
             return key
-
     return "key doesn't exist"
+
+
+def convert_to_row(d: dict) -> Row:
+    return Row(**OrderedDict(sorted(d.items())))
+
+def unionAll(dfs):
+    return functools.reduce(lambda df1,df2: df1.union(df2.select(df1.columns)), dfs)
+
+
+def creating_new_rows(raw_results, schema):
+    cat_rows = []
+    for cat in raw_results:
+        final_dict = dict(ChainMap(*cat))
+        newRow = spark.createDataFrame([final_dict], schema)
+        cat_rows.append(newRow)
+    return cat_rows
 
 ###################### Spark Med DF ############################
 def spk_med():
@@ -87,8 +115,19 @@ def spk_med():
     spayed_neutered_d = nested_json(text, 'spayed_neutered', 'attributes')
     special_needs_d = nested_json(text, 'special_needs', 'attributes')
     shots_current_d = nested_json(text, 'shots_current', 'attributes')
-
     final_order = [id_d, declawed_d, housetrained_d, shots_current_d, special_needs_d, spayed_neutered_d]
+
+    animals = []
+    num_cats_in_file = len(final_order[0])
+    for i in range(num_cats_in_file):
+        animal = []
+        animal.append(final_order[0][i])
+        animal.append(final_order[1][i])
+        animal.append(final_order[2][i])
+        animal.append(final_order[3][i])
+        animal.append(final_order[4][i])
+        animal.append(final_order[5][i])
+        animals.append(animal)
 
     spkschema = StructType([StructField("id", IntegerType(), True) \
                            , StructField("declawed", BooleanType(), True) \
@@ -97,14 +136,10 @@ def spk_med():
                            , StructField("special_needs", BooleanType(), True) \
                            , StructField("spayed_neutered", BooleanType(), True)])
 
-    spark = SparkSession.builder.config("spark.driver.extraClassPath", "/postgresql-42.2.9.jar").appName(
-        'furevermatch').getOrCreate()
-    spk_df = spark.createDataFrame(final_order, schema=spkschema)
-    return spk_df
+    spk_df = spark.createDataFrame(sc.emptyRDD(), spkschema)
+    unioned_df = unionAll(creating_new_rows(animals, spkschema))
+    return unioned_df
 
-
-med_spk = spk_med()
-print(med_spk)
 
 ###################### Spark description DF ############################
 def spk_descr():
@@ -112,17 +147,20 @@ def spk_descr():
     descriptiion_d = val_json(text, 'description')
     final_order = [id_d, descriptiion_d]
 
+    animals = []
+    num_cats_in_file = len(final_order[0])
+    for i in range(num_cats_in_file):
+        animal = []
+        animal.append(final_order[0][i])
+        animal.append(final_order[1][i])
+        animals.append(animal)
+
     spkschema = StructType([StructField("id", IntegerType(), True) \
-                           , StructField("description", StringType(), True) ])
-    spark = SparkSession.builder.config("spark.driver.extraClassPath", "/postgresql-42.2.9.jar").appName('furevermatch').getOrCreate()
-    spk_df = spark.createDataFrame(final_order, schema=spkschema)
-    return spk_df
+                               , StructField("description", StringType(), True)])
 
-descr_spk = spk_descr()
-print(descr_spk)
-
-
-
+    spk_df = spark.createDataFrame(sc.emptyRDD(), spkschema)
+    unioned_df = unionAll(creating_new_rows(animals, spkschema))
+    return unioned_df
 
 
 ###################### Spark temperment DF ############################
@@ -132,19 +170,24 @@ def spk_temp():
     dogs_d = nested_json(text, 'dogs', 'environment')
     cats_d = nested_json(text, 'cats', 'environment')
     final_order = [id_d, kids_d, dogs_d, cats_d]
+    animals = []
+    num_cats_in_file = len(final_order[0])
+    for i in range(num_cats_in_file):
+        animal = []
+        animal.append(final_order[0][i])
+        animal.append(final_order[1][i])
+        animal.append(final_order[2][i])
+        animal.append(final_order[3][i])
+        animals.append(animal)
 
     spkschema = StructType([StructField("id", IntegerType(), True) \
                            , StructField("children", BooleanType(), True) \
                            , StructField("dogs", BooleanType(), True) \
                            , StructField("cats", BooleanType(), True)])
+    spk_df = spark.createDataFrame(sc.emptyRDD(), spkschema)
+    unioned_df = unionAll(creating_new_rows(animals, spkschema))
+    return unioned_df
 
-    spark = SparkSession.builder.config("spark.driver.extraClassPath", "/postgresql-42.2.9.jar").appName(
-        'furevermatch').getOrCreate()
-    spk_df = spark.createDataFrame(final_order, schema=spkschema)
-    return spk_df
-
-temp_spk = spk_temp()
-print(temp_spk)
 
 ###################### Spark status DF ############################
 def spk_status():
@@ -153,15 +196,23 @@ def spk_status():
     status_chg_d = val_json(text, 'status_changed_at')
     final_order = [id_d, status_d, status_chg_d]
 
+    animals = []
+    num_cats_in_file = len(final_order[0])
+    for i in range(num_cats_in_file):
+        animal = []
+        animal.append(final_order[0][i])
+        animal.append(final_order[1][i])
+        animal.append(final_order[2][i])
+        animals.append(animal)
+
     spkschema = StructType([StructField("id", IntegerType(), True) \
                            , StructField("status", StringType(), True) \
                             , StructField("status_changed_at", StringType(), True)])
-    spark = SparkSession.builder.config("spark.driver.extraClassPath", "/postgresql-42.2.9.jar").appName('furevermatch').getOrCreate()
-    spk_df = spark.createDataFrame(final_order, schema=spkschema)
-    return spk_df
 
-status_spk = spk_status()
-print(status_spk)
+    spk_df = spark.createDataFrame(sc.emptyRDD(), spkschema)
+    unioned_df = unionAll(creating_new_rows(animals, spkschema))
+    return unioned_df
+
 
 # status_spk###################### Spark media DF ############################
 # def spk_media():
@@ -186,7 +237,7 @@ print(status_spk)
 # print(media_spk)
 
 
-
+###################### SOMETHING IS WRONG WITH THIS!
 ###################### Spark animal DF ############################
 def spk_ani():
     id_d = val_json(text, 'id')
@@ -222,35 +273,68 @@ def spk_ani():
                    date_added]
 
     spkschema = StructType([StructField("id", IntegerType(), True) \
-                            , StructField("org", StringType(), True) \
+                            , StructField("organization_id", StringType(), True) \
                             , StructField("name", StringType(), True) \
                             , StructField("size", StringType(), True) \
                             , StructField("age", StringType(), True) \
                             , StructField("gender", StringType(), True) \
-                            , StructField("breed_pri", StringType(), True) \
-                            , StructField("breed_sec", StringType(), True)
-                            , StructField("breed_mix", StringType(), True) \
-                            , StructField("breed_unkn", StringType(), True) \
-                            , StructField("color_pri", StringType(), True)
-                            , StructField("color_sec", StringType(), True) \
-                            , StructField("color_mix", StringType(), True) \
+                            , StructField("breeds_primary", StringType(), True) \
+                            , StructField("breeds_secondary", StringType(), True)
+                            , StructField("breeds_mixed", StringType(), True) \
+                            , StructField("breeds_unknown", StringType(), True) \
+                            , StructField("colors_primary", StringType(), True)
+                            , StructField("colors_secondary", StringType(), True) \
+                            , StructField("colors_mixed", StringType(), True) \
                             , StructField("coat", StringType(), True) \
-                            , StructField("date_added", StringType(), True)])
+                            , StructField("published_at", StringType(), True)])
 
-    spark = SparkSession.builder.config("spark.driver.extraClassPath", "/postgresql-42.2.9.jar").appName(
-        'furevermatch').getOrCreate()
-    spk_df = spark.createDataFrame(final_order, schema=spkschema)
-    return spk_df
+    animals = []
+    num_cats_in_file = len(final_order[0])
+    for i in range(num_cats_in_file):
+        animal = []
+        animal.append(final_order[0][i])
+        animal.append(final_order[1][i])
+        animal.append(final_order[2][i])
+        animal.append(final_order[3][i])
+        animal.append(final_order[4][i])
+        animal.append(final_order[5][i])
+        animal.append(final_order[6][i])
+        animal.append(final_order[7][i])
+        animal.append(final_order[8][i])
+        animal.append(final_order[9][i])
+        animal.append(final_order[10][i])
+        animal.append(final_order[11][i])
+        animal.append(final_order[12][i])
+        animal.append(final_order[13][i])
+        animal.append(final_order[14][i])
+        animals.append(animal)
+
+    spk_df = spark.createDataFrame(sc.emptyRDD(), spkschema)
+    unioned_df = unionAll(creating_new_rows(animals, spkschema))
+    return unioned_df
 
 
-ani_spk = spk_ani()
-print(ani_spk)
+def write_to_psql(df, table):
+    """ input is spark dataframe and the postgres table df needs to be written to """
+
+    # modes are 'overwrite', 'append', 'ignore', 'error', 'errorifexists'
+    mode = "overwrite"
+    url = "jdbc:postgresql://database-1.cu3ixi7c6kol.us-west-2.rds.amazonaws.com:5432/postgres"
+    properties = {"user": "postgres",
+                  "password": "fureverdb",
+                  "driver": "org.postgresql.Driver"}
+    df.write.jdbc(url=url,
+                  table=table,
+                  mode=mode,
+                  properties=properties)
 
 ###################### Spark tag DF ############################
 ###################### Spark organization DF ############################
 
 
 
-# create functions for removing out parts of the json file
-# then those functs will return a spark df that I can then load onto postgres
-##### write to postgres
+write_to_psql(spk_med(), 'animal_medical_info')
+write_to_psql(spk_ani(), 'animal_info')
+write_to_psql(spk_descr(), 'animal_description')
+write_to_psql(spk_status(), 'animal_status')
+write_to_psql(spk_temp(), 'animal_temperment')

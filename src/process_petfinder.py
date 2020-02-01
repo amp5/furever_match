@@ -18,8 +18,7 @@ mySchema = StructType([ StructField("first_name", StringType(), True)\
 
 spark = SparkSession.builder.config("spark.driver.extraClassPath", "/postgresql-42.2.9.jar").appName('furevermatch').getOrCreate()
 spk_df = spark.createDataFrame(i_df, schema=mySchema)
-
-print(type(spk_df))
+print(spk_df)
 
 ### need to create all the different kinds of spark dfs and then write them to psql
 write_to_psql(spk_df, "address")

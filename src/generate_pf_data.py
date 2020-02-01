@@ -3,6 +3,10 @@ import pandas as pd
 import json
 import random
 from random import seed
+from random import randrange
+from datetime import timedelta
+from datetime import datetime
+from datetime import date
 
 seed(5)
 name_list = ['Oscar', 'Max', 'Tiger', 'Sam', 'Misty',
@@ -80,13 +84,13 @@ list_o_files = ['2020-01-29_10573.json', '2020-01-29_10526.json',
 
 
 second_list = []
-for i in range(400):
+for i in range(100):
     filename = 'expected_output_' + str(i) + '.json'
     second_list.append(filename)
 new_list = list_o_files + second_list
 
 
-for num, file in enumerate(list_o_files, start = 5317):
+for num, file in enumerate(new_list, start = 7309):
     print(num)
     print(file)
     generate(file, num)
