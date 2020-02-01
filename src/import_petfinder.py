@@ -12,9 +12,9 @@ PETFINDER_SECRET='HK9loGC6r1FoAlqiKnJmght8UafzgGZcoL533eWM'
 pf = petpy.Petfinder(key=PETFINDER_KEY, secret=PETFINDER_SECRET)
 today = date.today()
 
-all_orgs_df = pf.organizations(state=['WA', 'OR', 'CA', 'NV'], return_df = True)
+all_orgs_df = pf.organizations(state=['WA', 'OR', 'CA', 'NV', 'AZ'], return_df = True)
 shelter_zipcodes = []
-for org in all_orgs_df:
+for org in all_orgs_df:impo
     if all_orgs_df['address.postcode'] not in shelter_zipcodes:
         shelter_zipcodes.append(all_orgs_df['address.postcode'])
 

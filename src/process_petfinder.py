@@ -3,24 +3,32 @@ import pandas as pd
 from pyspark.sql import SparkSession
 from pyspark.sql.types import *
 from pyspark.sql import DataFrameWriter
-from connect_to_s3 import read_s3
 from write_to_postgres import write_to_psql
+import connect_to_s3 as cs3
 
-i_df = read_s3('fureverdump', 'address.csv')
-print(i_df)
+s3 = boto3.client('s3')
+spark = SparkSession.builder \
+    .config("spark.driver.extraClassPath", "/postgresql-42.2.9.jar") \
+    .appName('furevermatch') \
+    .getOrCreate()
 
-mySchema = StructType([ StructField("first_name", StringType(), True)\
-                       ,StructField("last_name", StringType(), True)\
-                       ,StructField("street", StringType(), True)\
-                       ,StructField("city", StringType(), True)\
-                       ,StructField("state", StringType(), True)\
-                       ,StructField("zipcode", StringType(), True)])
+sc = spark.sparkContext
 
-spark = SparkSession.builder.config("spark.driver.extraClassPath", "/postgresql-42.2.9.jar").appName('furevermatch').getOrCreate()
-spk_df = spark.createDataFrame(i_df, schema=mySchema)
-print(spk_df)
+key = 'expected_output_0.json'
+key_list = [key]
 
-### need to create all the different kinds of spark dfs and then write them to psql
-write_to_psql(spk_df, "address")
-#write_to_psql(spk_df, "animal")
-#write_to_psql(spk_df, "organization")
+for key in key_list:
+    obj = s3.get_object(Bucket='fureverdump', Key=key)
+    text = obj["Body"].read().decode()
+
+    med_info = cs3.spk_med(text)
+    animal_info = cs3.spk_ani(text)
+    description_info = cs3.spk_descr(text)
+    status_info = cs3.spk_status(text)
+    temperment_info = cs3.spk_temp(text)
+
+    write_to_psql(med_info, 'animal_medical_info')
+    write_to_psql(animal_info, 'animal_info')
+    write_to_psql(description_info, 'animal_description')
+    write_to_psql(status_info, 'animal_status')
+    write_to_psql(temperment_info, 'animal_temperment')

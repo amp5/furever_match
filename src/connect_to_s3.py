@@ -10,7 +10,6 @@ from pyspark.sql import SQLContext
 from pyspark import SparkContext
 import zlib
 from ast import literal_eval
-#yes
 from collections import ChainMap
 from pyspark.sql import Row
 from collections import OrderedDict
@@ -108,13 +107,13 @@ def creating_new_rows(raw_results, schema):
     return cat_rows
 
 ###################### Spark Med DF ############################
-def spk_med():
-    id_d = val_json(text, 'id')
-    housetrained_d = nested_json(text, 'house_trained', 'attributes')
-    declawed_d = nested_json(text, 'declawed', 'attributes')
-    spayed_neutered_d = nested_json(text, 'spayed_neutered', 'attributes')
-    special_needs_d = nested_json(text, 'special_needs', 'attributes')
-    shots_current_d = nested_json(text, 'shots_current', 'attributes')
+def spk_med(data):
+    id_d = val_json(data, 'id')
+    housetrained_d = nested_json(data, 'house_trained', 'attributes')
+    declawed_d = nested_json(data, 'declawed', 'attributes')
+    spayed_neutered_d = nested_json(data, 'spayed_neutered', 'attributes')
+    special_needs_d = nested_json(data, 'special_needs', 'attributes')
+    shots_current_d = nested_json(data, 'shots_current', 'attributes')
     final_order = [id_d, declawed_d, housetrained_d, shots_current_d, special_needs_d, spayed_neutered_d]
 
     animals = []
@@ -142,9 +141,9 @@ def spk_med():
 
 
 ###################### Spark description DF ############################
-def spk_descr():
-    id_d = val_json(text, 'id')
-    descriptiion_d = val_json(text, 'description')
+def spk_descr(data):
+    id_d = val_json(data, 'id')
+    descriptiion_d = val_json(data, 'description')
     final_order = [id_d, descriptiion_d]
 
     animals = []
@@ -164,11 +163,11 @@ def spk_descr():
 
 
 ###################### Spark temperment DF ############################
-def spk_temp():
-    id_d = val_json(text, 'id')
-    kids_d = nested_json(text, 'children', 'environment')
-    dogs_d = nested_json(text, 'dogs', 'environment')
-    cats_d = nested_json(text, 'cats', 'environment')
+def spk_temp(data):
+    id_d = val_json(data, 'id')
+    kids_d = nested_json(data, 'children', 'environment')
+    dogs_d = nested_json(data, 'dogs', 'environment')
+    cats_d = nested_json(data, 'cats', 'environment')
     final_order = [id_d, kids_d, dogs_d, cats_d]
     animals = []
     num_cats_in_file = len(final_order[0])
@@ -190,10 +189,10 @@ def spk_temp():
 
 
 ###################### Spark status DF ############################
-def spk_status():
-    id_d = val_json(text, 'id')
-    status_d = val_json(text, 'status')
-    status_chg_d = val_json(text, 'status_changed_at')
+def spk_status(data):
+    id_d = val_json(data, 'id')
+    status_d = val_json(data, 'status')
+    status_chg_d = val_json(data, 'status_changed_at')
     final_order = [id_d, status_d, status_chg_d]
 
     animals = []
@@ -239,22 +238,22 @@ def spk_status():
 
 ###################### SOMETHING IS WRONG WITH THIS!
 ###################### Spark animal DF ############################
-def spk_ani():
-    id_d = val_json(text, 'id')
-    org_d = val_json(text, 'organization_id')
-    name_d = val_json(text, 'name')
-    size_d = val_json(text, 'size')
-    age_d = val_json(text, 'age')
-    gender_d = val_json(text, 'gender')
-    breed_pri_d = nested_json(text, 'primary', 'breeds')
-    breed_sec_d = nested_json(text, 'secondary', 'breeds')
-    breed_mix_d = nested_json(text, 'mixed', 'breeds')
-    breed_unkn_d = nested_json(text, 'unknown', 'breeds')
-    color_pri_d = nested_json(text, 'primary', 'colors')
-    color_sec_d = nested_json(text, 'secondary', 'colors')
-    color_mix_d = nested_json(text, 'tertiary', 'colors')
-    coat_d = val_json(text, 'coat')
-    date_added = val_json(text, 'published_at')
+def spk_ani(data):
+    id_d = val_json(data, 'id')
+    org_d = val_json(data, 'organization_id')
+    name_d = val_json(data, 'name')
+    size_d = val_json(data, 'size')
+    age_d = val_json(data, 'age')
+    gender_d = val_json(data, 'gender')
+    breed_pri_d = nested_json(data, 'primary', 'breeds')
+    breed_sec_d = nested_json(data, 'secondary', 'breeds')
+    breed_mix_d = nested_json(data, 'mixed', 'breeds')
+    breed_unkn_d = nested_json(data, 'unknown', 'breeds')
+    color_pri_d = nested_json(data, 'primary', 'colors')
+    color_sec_d = nested_json(data, 'secondary', 'colors')
+    color_mix_d = nested_json(data, 'tertiary', 'colors')
+    coat_d = val_json(data, 'coat')
+    date_added = val_json(data, 'published_at')
 
     final_order = [id_d,
                    org_d,
@@ -333,8 +332,3 @@ def write_to_psql(df, table):
 
 
 
-write_to_psql(spk_med(), 'animal_medical_info')
-write_to_psql(spk_ani(), 'animal_info')
-write_to_psql(spk_descr(), 'animal_description')
-write_to_psql(spk_status(), 'animal_status')
-write_to_psql(spk_temp(), 'animal_temperment')
