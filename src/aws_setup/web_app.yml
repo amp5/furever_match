@@ -1,0 +1,10 @@
+purchase_type: on_demand
+subnet_id: subnet-0eb1d990d7d625409
+num_instances: 1
+key_name: Alexandra-Plassaras-IAM-keypair
+security_group_ids: sg-095ccc87dd06752d2
+instance_type: t2.micro
+tag_name: app
+vol_size: 100
+role: master
+use_eips: true

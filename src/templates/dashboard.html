@@ -1,20 +1,23 @@
-
 {% extends 'base.html' %}
+
+
 {% block content %}
-<ul class="nav nav-tabs">
-  <li class="active"><a href="#">Data Tables</a></li>
-  <li class="dropdown">
-    <a class="dropdown-toggle" data-toggle="dropdown" href= "#">Exploration
-    <span class="caret"></span></a>
-    <ul class="dropdown-menu">
-      <li><a href="#">Shelter Level</a></li>
-      <li><a href="#">Cat Level</a></li>
-      <li><a href="#">State Level</a></li>
-    </ul>
-  </li>
-  <li><a href="#">Missing Data</a></li>
-</ul>
+<script>
+    $('body').attr('background', "../static/gold_coin.jpg");
+</script>
 
-<script src="../static/dashboard.js"></script>
+<div class="text-center vcenter" id="homepage">
+    <h1 id="title-main"> Ikura </h1>
 
-{% endblock %}
+    <h4> Helping you get on track.</h4>
+
+    {{ compliment }}
+
+
+    <script src="../static/forms.js"></script>
+
+    <script src="../static/homepage.css"></script>
+
+
+    {% endblock %}
+

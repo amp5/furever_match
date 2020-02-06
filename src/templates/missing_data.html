@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div class="text-center vcenter" id="homepage">
+	<h1 id="title-main"> Data Schema Overview </h1>
+</div>
+    <div class="text-center vcenter" id="homepage">
+        <div class="container-fluid">
+            <div class="row-fluid">
+                <div class="col-md-3 box" id="card-summary">
+
+                    <div class="dropdown">
+                        <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1"
+                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                            Choose Table
+                            <span class="caret"></span>
+                        </button>
+                        <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+                            <li><a href="#">Animal </a></li>
+                            <li><a href="#">Medical</a></li>
+                            <li><a href="#">Temperment</a></li>
+                            <li><a href="#">Status</a></li>
+                            <li><a href="#">Description</a></li>
+                            <li role="separator" class="divider"></li>
+                            <li><a href="#">Separated link</a></li>
+                        </ul>
+                    </div>
+
+                </div>
+                <div class="col-md-9" id="main">
+                </div>
+                <div class="col-md-9" id="main">
+                    <div class="col-xs-12 col-md-12 col-lg-12 box" id="visualization">
+                        <div align="center" id="pull-phrase">
+                            <div class="panel panel-default">
+                                <div class="panel-heading sugg_plan" id="sugg_plan" align="center">
+                                    Table Name
+                                </div>
+                                <div class="panel-body">
+                                    <table class="table" style="width:100%">
+                                        <tr>
+                                            <th>Column Name</th>
+                                            <th>Primary Key</th>
+                                            <th>Type</th>
+                                            <th>Comments</th>
+                                        </tr>
+                                        <tr>
+                                            <td>Jill</td>
+                                            <td>Smith</td>
+                                            <td>50</td>
+                                            <td>50</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Eve</td>
+                                            <td>Jackson</td>
+                                            <td>94</td>
+                                            <td>50</td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script src="../static/forms.js"></script>
+
+        <script src="../static/homepage.css"></script>
+    </div>>
+
+
+    {% endblock %}

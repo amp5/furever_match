@@ -32,3 +32,10 @@ for key in key_list:
     write_to_psql(description_info, 'animal_description')
     write_to_psql(status_info, 'animal_status')
     write_to_psql(temperment_info, 'animal_temperment')
+
+query = """select coat, count(*) from animal_info group by coat;"""
+print(query)
+print(cs3.run_query(query))
+
+
+# select coat, colors_primary, count(*) from animal_info where coat is not NULL and colors_primary is not NULL group by coat, colors_primary;

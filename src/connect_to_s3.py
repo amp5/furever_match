@@ -11,9 +11,7 @@ from pyspark import SparkContext
 import zlib
 from ast import literal_eval
 from collections import ChainMap
-from pyspark.sql import Row
 from collections import OrderedDict
-from pyspark.sql.types import *
 import functools
 from pyspark.sql.functions import col, when
 from functools import reduce
@@ -31,6 +29,7 @@ spark = SparkSession.builder \
     .getOrCreate()
 
 sc = spark.sparkContext
+sqlContext = SQLContext(spark)
 
 def find_values(id, json_repr):
     results = []
@@ -330,5 +329,8 @@ def write_to_psql(df, table):
 ###################### Spark tag DF ############################
 ###################### Spark organization DF ############################
 
+def run_query(query):
+    df_select = spark.sql(query)
+    return df_select
 
-
+# select coat, colors_primary, count(*) from animal_info where coat is not NULL and colors_primary is not NULL group by coat, colors_primary;

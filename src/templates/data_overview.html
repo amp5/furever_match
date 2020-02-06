@@ -1,0 +1,259 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div class="text-center vcenter" id="homepage">
+    <h1 id="title-main"> Data Schema Overview </h1>
+</div>
+<div class="text-center vcenter" id="homepage">
+    <div class="container-fluid">
+        <div class="row-fluid">
+            <div class=".nav">
+                <ul class="nav nav-tabs">
+                    <li><a href="#a" data-toggle="tab">Cat Info</a></li>
+                    <li><a href="#b" data-toggle="tab">Medical Info</a></li>
+                    <li><a href="#c" data-toggle="tab">Cat Descriptions</a></li>
+                    <li><a href="#d" data-toggle="tab">Temperment Info</a></li>
+                    <li><a href="#e" data-toggle="tab">Status Info</a></li>
+                </ul>
+            </div>
+            <div class="tab-content">
+                <div class="tab-pane active" id="a">
+                    <div class="col-xs-12 col-md-12 col-lg-12 box" id="visualization1">
+                        <div align="center" id="pull-phrase1">
+                            <div class="panel panel-default">
+                                <div class="panel-heading sugg_plan" id="cat_info" align="center">
+                                    Table Name: animal_info
+                                </div>
+                                <div class="panel-body">
+                                    <table class="table" style="width:100%">
+                                        <tr>
+                                            <th>Column Name</th>
+                                            <th>Data Type</th>
+                                            <th>Is Nullable</th>
+                                        </tr>
+                                        <tr>
+                                            <td>Id</td>
+                                            <td>Integer</td>
+                                            <td>True</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Organization</td>
+                                            <td>Boolean</td>
+                                            <td>True</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Name</td>
+                                            <td>String</td>
+                                            <td>True</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Size</td>
+                                            <td>String</td>
+                                            <td>True</td>
+                                        </tr>
+                                                                                <tr>
+                                            <td>Age</td>
+                                            <td>Integer</td>
+                                            <td>True</td>
+                                        </tr>
+                                                                                <tr>
+                                            <td>Gender</td>
+                                            <td>String</td>
+                                            <td>True</td>
+                                        </tr>
+                                                                                                                        <tr>
+                                            <td>Coat</td>
+                                            <td>String</td>
+                                            <td>True</td>
+                                        </tr>
+                                                                                                                        <tr>
+                                            <td>Data Added</td>
+                                            <td>Timestamp</td>
+                                            <td>True</td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+        <div class="tab-pane" id="b">
+            <div class="col-xs-12 col-md-12 col-lg-12 box" id="visualization2">
+                <div align="center" id="pull-phrase2">
+                    <div class="panel panel-default">
+                        <div class="panel-heading sugg_plan" id="medical_info" align="center">
+                            Table Name: animal_medical_info
+                        </div>
+                        <div class="panel-body">
+                            <table class="table" style="width:100%">
+                                <tr>
+                                    <th>Column Name</th>
+                                    <th>Data Type</th>
+                                    <th>Is Nullable</th>
+                                </tr>
+                                <tr>
+                                    <td>Id</td>
+                                    <td>Integer</td>
+                                    <td>True</td>
+                                </tr>
+                                <tr>
+                                    <td>Declawed</td>
+                                    <td>Boolean</td>
+                                    <td>True</td>
+                                </tr>
+                                <tr>
+                                    <td>Housetrained</td>
+                                    <td>Boolean</td>
+                                    <td>True</td>
+                                </tr>
+                                <tr>
+                                    <td>Shots Current</td>
+                                    <td>Boolean</td>
+                                    <td>True</td>
+                                </tr>
+                                                                <tr>
+                                    <td>Special Needs</td>
+                                    <td>Boolean</td>
+                                    <td>True</td>
+                                </tr>
+                                                                <tr>
+                                    <td>Spayed / Neutered</td>
+                                    <td>Boolean</td>
+                                    <td>True</td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="tab-pane" id="c">
+            <div class="col-xs-12 col-md-12 col-lg-12 box" id="visualization3">
+                <div align="center" id="pull-phrase3">
+                    <div class="panel panel-default">
+                        <div class="panel-heading sugg_plan" id="cat_descrp" align="center">
+                            Table Name: animal_description
+                        </div>
+                        <div class="panel-body">
+                            <table class="table" style="width:100%">
+                                <tr>
+                                    <th>Column Name</th>
+                                    <th>Data Type</th>
+                                    <th>Is Nullable</th>
+                                </tr>
+                                <tr>
+                                    <td>Id</td>
+                                    <td>Integer</td>
+                                    <td>True</td>
+                                </tr>
+                                <tr>
+                                    <td>Good with Children</td>
+                                    <td>Boolean</td>
+                                    <td>True</td>
+                                </tr>
+                                <tr>
+                                    <td>Good with Cats</td>
+                                    <td>Boolean</td>
+                                    <td>True</td>
+                                </tr>
+                                <tr>
+                                    <td>Good with Dogs</td>
+                                    <td>Boolean</td>
+                                    <td>True</td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="tab-pane" id="d">
+            <div class="col-xs-12 col-md-12 col-lg-12 box" id="visualization4">
+                <div align="center" id="pull-phrase4">
+                    <div class="panel panel-default">
+                        <div class="panel-heading sugg_plan" id="temperment_info" align="center">
+                            Table Name: animal_temperment
+                        </div>
+                        <div class="panel-body">
+                            <table class="table" style="width:100%">
+                                <tr>
+                                    <th>Column Name</th>
+                                    <th>Data Type</th>
+                                    <th>Is Nullable</th>
+                                </tr>
+                                <tr>
+                                    <td>Id</td>
+                                    <td>Integer</td>
+                                    <td>True</td>
+                                </tr>
+                                <tr>
+                                    <td>Good with Children</td>
+                                    <td>Boolean</td>
+                                    <td>True</td>
+                                </tr>
+                                <tr>
+                                    <td>Good with Cats</td>
+                                    <td>Boolean</td>
+                                    <td>True</td>
+                                </tr>
+                                <tr>
+                                    <td>Good with Dogs</td>
+                                    <td>Boolean</td>
+                                    <td>True</td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="tab-pane" id="e">
+            <div class="col-xs-12 col-md-12 col-lg-12 box" id="visualization5">
+                <div align="center" id="pull-phrase5">
+                    <div class="panel panel-default">
+                        <div class="panel-heading sugg_plan" id="status_info" align="center">
+                            Table Name: animal_status
+                        </div>
+                        <div class="panel-body">
+                            <table class="table" style="width:100%">
+                                <tr>
+                                    <th>Column Name</th>
+                                    <th>Data Type</th>
+                                    <th>Is Nullable</th>
+                                </tr>
+                                <tr>
+                                    <td>Id</td>
+                                    <td>Integer</td>
+                                    <td>True</td>
+                                </tr>
+                                <tr>
+                                    <td>Good with Children</td>
+                                    <td>Boolean</td>
+                                    <td>True</td>
+                                </tr>
+                                <tr>
+                                    <td>Good with Cats</td>
+                                    <td>Boolean</td>
+                                    <td>True</td>
+                                </tr>
+                                <tr>
+                                    <td>Good with Dogs</td>
+                                    <td>Boolean</td>
+                                    <td>True</td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="../static/forms.js"></script>
+
+<script src="../static/homepage.css"></script>
+</div>
+
+
+{% endblock %}

@@ -1,5 +1,5 @@
 # copy local files into S3 bucket for spark master to access
-aws s3 cp /Users/alexandraplassaras/src/furever_match/src/import_data/import_petfinder.py s3://fureverdump/
+aws s3 cp /Users/alexandraplassaras/src/furever_match/src/import_petfinder.py s3://fureverdump/
 aws s3 cp /Users/alexandraplassaras/src/furever_match/src/postgres_setup/postgresql-42.2.9.jar s3://fureverdump/
 aws s3 cp /Users/alexandraplassaras/src/furever_match/src/connect_to_s3.py s3://fureverdump/
 aws s3 cp /Users/alexandraplassaras/src/furever_match/src/process_petfinder.py s3://fureverdump/
@@ -17,6 +17,7 @@ aws s3 cp s3://fureverdump/postgresql-42.2.9.jar .
 aws s3 cp s3://fureverdump/connect_to_s3.py .
 aws s3 cp s3://fureverdump/process_petfinder.py .
 aws s3 cp s3://fureverdump/write_to_postgres.py .
+
 
 ###### NOT Working ######
 spark-submit --master yarn --deploy-mode client --jars /postgresql-42.2.9.jar connect_to_s3.py
