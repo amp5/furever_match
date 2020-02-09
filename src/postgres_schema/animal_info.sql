@@ -1,8 +1,8 @@
 CREATE TABLE animal_info(
    animal_id INTEGER PRIMARY KEY,
-   organization BOOlEAN ,
-   name BOOlEAN ,
-   size BOOlEAN,
+   organization INTEGER ,
+   name Char(100) ,
+   size INTEGER ,
    age INTEGER ,
    gender CHAR(50),
    breed_primary CHAR(100),
@@ -14,6 +14,14 @@ CREATE TABLE animal_info(
    color_tertiary CHAR(100),
    coat CHAR(100),
    date_added TIMESTAMP,
-   FOREIGN KEY (animal_id) REFERENCES animal_description(animal_id)
+--    FOREIGN KEY (animal_id) REFERENCES animal_description(id)
 );
 
+
+
+
+
+
+-- INSERT INTO animal_info(animal_id, coat, color_primary, name)
+-- VALUES
+--    (5, 'medium', 'tuxedo', 'Tsuke');
