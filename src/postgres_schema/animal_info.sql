@@ -18,10 +18,3 @@ CREATE TABLE animal_info(
 );
 
 
-
-
-
-
--- INSERT INTO animal_info(animal_id, coat, color_primary, name)
--- VALUES
---    (5, 'medium', 'tuxedo', 'Tsuke');

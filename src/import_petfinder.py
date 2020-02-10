@@ -12,7 +12,20 @@ PETFINDER_SECRET='HK9loGC6r1FoAlqiKnJmght8UafzgGZcoL533eWM'
 pf = petpy.Petfinder(key=PETFINDER_KEY, secret=PETFINDER_SECRET)
 today = date.today()
 
-all_orgs_df = pf.organizations(state=['WA', 'OR'], return_df = True)
+########### Org Info #############
+state_list = ['WA', 'OR', 'CA', 'TX', 'NV']
+
+for state in state_list:
+    all_orgs_df = pf.organizations(state=state,
+                                   results_per_page=50,
+                                   pages=30,
+                                   return_df = True)
+    org_info = all_orgs_df[['id',
+                       'name']]
+    org_info.to_csv('/Users/alexandraplassaras/src/furever_match/data/output/org_info_' + str(state) +'.csv')
+
+
+###### Animal Info ##########
 shelter_zipcodes = []
 for org in all_orgs_df:
     if all_orgs_df['address.postcode'] not in shelter_zipcodes:

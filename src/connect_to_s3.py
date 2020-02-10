@@ -1,6 +1,7 @@
 import boto3
 import pandas as pd
 from pyspark.sql import SparkSession
+from pyspark.conf import SparkConf
 from pyspark.sql.types import *
 from pyspark.sql import DataFrameWriter
 import json
@@ -16,19 +17,13 @@ import functools
 from pyspark.sql.functions import col, when
 from functools import reduce
 
-
-key = 'expected_output_0.json'
-s3 = boto3.client('s3')
-
-obj = s3.get_object(Bucket='fureverdump', Key=key)
-text = obj["Body"].read().decode()
-
 spark = SparkSession.builder \
     .config("spark.driver.extraClassPath", "/postgresql-42.2.9.jar") \
     .appName('furevermatch') \
     .getOrCreate()
 
 sc = spark.sparkContext
+
 sqlContext = SQLContext(spark)
 
 def find_values(id, json_repr):
@@ -64,6 +59,7 @@ def val_json(json_file, key_name):
     for val in all_vals:
         pair = {key_name : val}
         return_list.append(pair)
+        print(pair)
     return return_list
 
 def nested_json(json_file, key_name, parent_name):
@@ -80,6 +76,7 @@ def nested_json(json_file, key_name, parent_name):
             child_val = parent[key_name]
             pair = {key_name : child_val}
         children_lst.append(pair)
+        print(pair)
     return children_lst
 
 
@@ -211,31 +208,6 @@ def spk_status(data):
     unioned_df = unionAll(creating_new_rows(animals, spkschema))
     return unioned_df
 
-
-# status_spk###################### Spark media DF ############################
-# def spk_media():
-#     id_d = val_json(text, 'id')
-#     photos = val_json(text, 'photos')['photos']
-#     photo1 = photos[0]['full']
-#     photo2 = photos[1]['full']
-#     photo3 = photos[2]['full']
-#     final_order = [id_d, photo1, photo2, photo3]
-#
-#     spkschema = StructType([StructField("id", IntegerType(), True) \
-#                            , StructField("photo1", StringType(), True) \
-#                            , StructField("photo2", StringType(), True) \
-#                            , StructField("photo3", StringType(), True)])
-#
-#     spark = SparkSession.builder.config("spark.driver.extraClassPath", "/postgresql-42.2.9.jar").appName(
-#         'furevermatch').getOrCreate()
-#     spk_df = spark.createDataFrame(final_order, schema=spkschema)
-#     return spk_df
-#
-# media_spk = spk_media()
-# print(media_spk)
-
-
-###################### SOMETHING IS WRONG WITH THIS!
 ###################### Spark animal DF ############################
 def spk_ani(data):
     id_d = val_json(data, 'id')
@@ -269,6 +241,7 @@ def spk_ani(data):
                    color_mix_d,
                    coat_d,
                    date_added]
+    print("do I have final ani schema?")
 
     spkschema = StructType([StructField("id", IntegerType(), True) \
                             , StructField("organization_id", StringType(), True) \
@@ -306,31 +279,30 @@ def spk_ani(data):
         animal.append(final_order[13][i])
         animal.append(final_order[14][i])
         animals.append(animal)
+    print("have my ani animals been appended?")
 
     spk_df = spark.createDataFrame(sc.emptyRDD(), spkschema)
     unioned_df = unionAll(creating_new_rows(animals, spkschema))
     return unioned_df
 
 
-def write_to_psql(df, table):
-    """ input is spark dataframe and the postgres table df needs to be written to """
+# def write_to_psql(df, table):
+#     """ input is spark dataframe and the postgres table df needs to be written to """
+#
+#     # modes are 'overwrite', 'append', 'ignore', 'error', 'errorifexists'
+#     print("do I stop here?")
+#     mode = "overwrite"
+#     url = "jdbc:postgresql://database-1.cu3ixi7c6kol.us-west-2.rds.amazonaws.com:5432/postgres"
+#     properties = {"user": "postgres",
+#                   "password": "fureverdb",
+#                   "driver": "org.postgresql.Driver"}
+#     print("or at least make it to before writing")
+#     df.write.jdbc(url=url,
+#                   table=table,
+#                   mode=mode,
+#                   properties=properties)
 
-    # modes are 'overwrite', 'append', 'ignore', 'error', 'errorifexists'
-    mode = "overwrite"
-    url = "jdbc:postgresql://database-1.cu3ixi7c6kol.us-west-2.rds.amazonaws.com:5432/postgres"
-    properties = {"user": "postgres",
-                  "password": "fureverdb",
-                  "driver": "org.postgresql.Driver"}
-    df.write.jdbc(url=url,
-                  table=table,
-                  mode=mode,
-                  properties=properties)
 
-###################### Spark tag DF ############################
-###################### Spark organization DF ############################
 
 def run_query(query):
     df_select = spark.sql(query)
-    return df_select
-
-# select coat, colors_primary, count(*) from animal_info where coat is not NULL and colors_primary is not NULL group by coat, colors_primary;

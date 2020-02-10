@@ -7,8 +7,6 @@ from write_to_postgres import write_to_psql
 import connect_to_s3 as cs3
 
 s3 = boto3.client('s3')
-# key = '2020-01-28_97525.json'
-key_list = ['2020-01-28_97138.json']
 
 already_processed = ['2020-01-29_97525.json',
                         '2020-01-31_97525.json',
@@ -23,7 +21,7 @@ for key in s3.list_objects(Bucket='fureverdump')['Contents']:
     if key['Key'][0] == '2' and key['Key'] not in already_processed:
         real_raw.append(key['Key'])
 
-files_to_process = real_raw[25:35]
+files_to_process = real_raw[35:45]
 print(files_to_process)
 
 for key in files_to_process:

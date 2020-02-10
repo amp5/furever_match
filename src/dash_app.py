@@ -20,7 +20,6 @@ app = dash.Dash(
 navbar = dbc.NavbarSimple(
     children=[
         dbc.NavItem(dcc.Link('Analysts   ', href='/page-1')),
-        html.Br(),
         dbc.NavItem(dcc.Link('   Engineers', href='/page-2')),
     ],
     brand="Furever Match",
@@ -50,63 +49,76 @@ hovertemplate1 = "<b>  %{y} and %{x} : %{z} Cats "
 
 #### Shelter query
 shelter_q = """
-                select
-                    declaw.organization_id,
+                select 
+                    organization_name,
                     num_declawed,
                     num_not_house_trained,
                     num_shots_not_current,
                     num_special_needs,
                     num_not_fixed
                 from
-                    (select
-                        organization_id,
-                        count(declawed) as num_declawed
-                    from animal_medical_info
-                    left join animal_info
-                        on animal_info.id = animal_medical_info.id
-                    where declawed is True
-                    group by organization_id) declaw
-                
-                left join
-                    (select
-                        organization_id,
-                        count(house_trained) as num_not_house_trained
-                    from animal_medical_info
-                    left join animal_info
-                        on animal_info.id = animal_medical_info.id
-                    where house_trained is False
-                    group by organization_id) house
-                on declaw.organization_id = house.organization_id
-                left join
-                    (select
-                        organization_id,
-                        count(shots_current) as num_shots_not_current
-                    from animal_medical_info
-                    left join animal_info
-                        on animal_info.id = animal_medical_info.id
-                    where shots_current is False
-                    group by organization_id) shots
-                on declaw.organization_id = shots.organization_id
-                left join
-                    (select
-                        organization_id,
-                        count(special_needs) as num_special_needs
-                    from animal_medical_info
-                    left join animal_info
-                        on animal_info.id = animal_medical_info.id
-                    where special_needs is True
-                    group by organization_id) special
-                on declaw.organization_id = special.organization_id
-                left join
-                    (select
-                        organization_id,
-                        count(spayed_neutered) as num_not_fixed
-                    from animal_medical_info
-                    left join animal_info
-                        on animal_info.id = animal_medical_info.id
-                    where spayed_neutered is False
-                    group by organization_id) fixed
-                on declaw.organization_id = fixed.organization_id;
+                    (
+                        select
+                            declaw.organization_id,
+                            num_declawed,
+                            num_not_house_trained,
+                            num_shots_not_current,
+                            num_special_needs,
+                            num_not_fixed
+                        from
+                            (select
+                                organization_id,
+                                count(declawed) as num_declawed
+                            from animal_medical_info
+                            left join animal_info
+                                on animal_info.id = animal_medical_info.id
+                            where declawed is True
+                            group by organization_id) declaw
+                        
+                        left join
+                            (select
+                                organization_id,
+                                count(house_trained) as num_not_house_trained
+                            from animal_medical_info
+                            left join animal_info
+                                on animal_info.id = animal_medical_info.id
+                            where house_trained is False
+                            group by organization_id) house
+                        on declaw.organization_id = house.organization_id
+                        left join
+                            (select
+                                organization_id,
+                                count(shots_current) as num_shots_not_current
+                            from animal_medical_info
+                            left join animal_info
+                                on animal_info.id = animal_medical_info.id
+                            where shots_current is False
+                            group by organization_id) shots
+                        on declaw.organization_id = shots.organization_id
+                        left join
+                            (select
+                                organization_id,
+                                count(special_needs) as num_special_needs
+                            from animal_medical_info
+                            left join animal_info
+                                on animal_info.id = animal_medical_info.id
+                            where special_needs is True
+                            group by organization_id) special
+                        on declaw.organization_id = special.organization_id
+                        left join
+                            (select
+                                organization_id,
+                                count(spayed_neutered) as num_not_fixed
+                            from animal_medical_info
+                            left join animal_info
+                                on animal_info.id = animal_medical_info.id
+                            where spayed_neutered is False
+                            group by organization_id) fixed
+                        on declaw.organization_id = fixed.organization_id
+                    ) main
+                left join organization_info
+                on main.organization_id = organization_info.organization_id
+                ;
             """
 shelter_df = run_query(shelter_q)
 shelter_df['total'] = shelter_df['num_declawed'] + \
@@ -117,7 +129,7 @@ shelter_df['total'] = shelter_df['num_declawed'] + \
 
 shelter_df = shelter_df.replace('NaN', 0)
 final_shelter = shelter_df.sort_values(by=['total'], ascending=False).head(10)
-org_names = final_shelter['organization_id']
+org_names = final_shelter['organization_name']
 
 trace1 = go.Bar(
     x=org_names, y=final_shelter['num_declawed'],
@@ -234,9 +246,6 @@ page_1_layout = html.Div(children=[
 )
 
 
-
-
-
 page_2_layout = html.Div(children=[
         navbar,
         html.H1('Engineering Dashboard',
@@ -274,6 +283,7 @@ page_2_layout = html.Div(children=[
                         'textAlign': 'left'
                     }
                 ]
+
         ),
 
         dcc.Link('Go back to home', href='/')
