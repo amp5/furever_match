@@ -1,30 +1,18 @@
-# furever_match
-Data Engineering Batch processing project
+# Furever Match
+
 
 ## Project Idea
-Creating a tool that feature engineers additional data not provided by animal shelters on adoptable cats.
+My goal for this project was to create a tool that would enable animal shelters access to the insights of the their data. Whether that be a volunteer at the shelter, an analyst of data scientist at a larger non-profit like ASPCA or the engineers who help keep everything running. My focus of this project was on cat adoption data using Petfinder's national adoption data API and building the architecture for a tool that would support not only large amounts of data but also various kinds of data. The ultimate goal being to help kitties everywhere find their furever homes 😻.
+
 
 ## Tech Stack
+Tools: AWS S3, AWS EC2, Apache Spark SQL, PostgreSQL, Flask, Dash
 
-<img src="https://github.com/amp5/furever_match/blob/master/reports/pictures/spark.png" width="100" height="100">   <img src="https://github.com/amp5/furever_match/blob/master/reports/pictures/airflow.png" width="100" height="100">   <img src="https://github.com/amp5/furever_match/blob/master/reports/pictures/flask.png" width="100" height="100">
-
-## Data Sources
-[<img src="https://github.com/amp5/furever_match/blob/master/reports/pictures/petfinder_logo.png">](https://www.petfinder.com/)
-[<img src="https://github.com/amp5/furever_match/blob/master/reports/pictures/openweather-logo.png">](https://openweathermap.org/)
+This project was built using the above tools. First I called Petfinder's API to extract data on current cat adoptions and store raw JSON files into AWS S3. From there I used Spark to extract, transform and load data from AWS S3 to Postgres using Spark's main features as well as Spark SQL to query and analyze the data. Throughout this process JSON data was transformed into dataframe, normalized and condenced into multiple tables in Postgres. This pipeline was also deployed on AWS EC2 and the resulting information found in Postgres was visualized in a Flask web application using Dash for visualizations. 
 
 
-## Business Value
-
-### For Adopters:
-Creating a tool that provides more information for adopters to find cats that will suit their lifestyle.
-
-### For Shelters:
-Adding additional information seemlessly about adoptable cats which provides more bandwidth for the shelter to have more face time with potential adopters.
-
-
-## MVP
-Combine Petfinder data with weather data and breed information. Setup and run batch processing every 6 hours via Airflow. Create a dashboard for users to see new and improved cat profiles. 
-
-## Stretch Goals
-Combine this project to allow for cataloging a data lake for exploration.
-
+## What I would like to work on next with Furever Match
+- Incorporate Airflow into this to call Petfinder API daily or 2x a day. 
+- Add additional data sources, perhaps hyper local datasets from shelters.
+- Build out historical snapshots of data to track progression of cat profiles over time.
+- Collaborate with data scientists / analysts to build ML models in the decription data to highlight key features for cats to retroactively add to the data set. For example overall temperment of the cat or health issues mentioned in the description but not added into the original key value pairs of JSON. I could also build this myself :)
