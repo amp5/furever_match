@@ -23,9 +23,12 @@ for key in s3.list_objects(Bucket='fureverdump')['Contents']:
     elif 'expected_output_' in  key['Key'] and key['Key'] not in already_processed:
         fake_raw.append(key['Key'])
 #files_to_process = real_raw
+#print(files_to_process)
+#print(len(real_raw))
 
 
-files_to_process = fake_raw[2:3]
+
+files_to_process = fake_raw[3:10]
 #print(fake_raw[:100])
 #print(files_to_process)
 

@@ -3,6 +3,7 @@ import pandas as pd
 from pyspark.sql import SparkSession
 from pyspark.conf import SparkConf
 from pyspark.sql.types import *
+from pyspark.sql import DataFrame
 from pyspark.sql import DataFrameWriter
 import json
 from write_to_postgres import write_to_psql
@@ -23,8 +24,6 @@ spark = SparkSession.builder \
     .getOrCreate()
 
 sc = spark.sparkContext
-
-
 
 sqlContext = SQLContext(spark)
 
@@ -93,7 +92,7 @@ def convert_to_row(d: dict) -> Row:
     return Row(**OrderedDict(sorted(d.items())))
 
 def unionAll(dfs):
-    return functools.reduce(lambda df1,df2: df1.union(df2.select(df1.columns)), dfs)
+    return reduce(DataFrame.unionAll, dfs)
 
 
 def creating_new_rows(raw_results, schema):
@@ -134,7 +133,7 @@ def spk_med(data):
                            , StructField("spayed_neutered", BooleanType(), True)])
 
     spk_df = spark.createDataFrame(sc.emptyRDD(), spkschema)
-    unioned_df = unionAll(creating_new_rows(animals, spkschema))
+    unioned_df = reduce(DataFrame.unionAll, creating_new_rows(animals, spkschema))
     return unioned_df
 
 
@@ -307,4 +306,6 @@ def spk_ani(data):
 
 
 def run_query(query):
-    df_select = spark.sql(query)
+     df_select = spark.sql(query)
+
+
