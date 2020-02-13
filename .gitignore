@@ -127,3 +127,27 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# Other things
+        src/postgresql-42.2.9.jar
+                src/docker_setup/
+        src/postgres_setup/
+                src/.templates/
+        src/aws_setup/.templates/
+        src/aws_setup/connect_to_s3.py
+        src/aws_setup/import_petfinder.py
+        src/aws_setup/postgresql-42.2.9.jar
+        src/aws_setup/process_petfinder.py
+        src/aws_setup/spark_hadoop.sh
+        src/aws_setup/write_to_postgres.py
+secrets.sh
+        pegasus/
+        postgresql-42.2.9.jar
+      data/input/expected_output_0.json
+        get-pip.py
+        .bash_profile
+        .idea/
+        .zshrc
+        aws/
+        awscliv2.zip
+

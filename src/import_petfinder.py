@@ -12,17 +12,19 @@ PETFINDER_SECRET='HK9loGC6r1FoAlqiKnJmght8UafzgGZcoL533eWM'
 pf = petpy.Petfinder(key=PETFINDER_KEY, secret=PETFINDER_SECRET)
 today = date.today()
 
-########### Org Info #############
 state_list = ['WA', 'OR', 'CA', 'TX', 'NV']
 
-for state in state_list:
-    all_orgs_df = pf.organizations(state=state,
-                                   results_per_page=50,
-                                   pages=30,
-                                   return_df = True)
-    org_info = all_orgs_df[['id',
-                       'name']]
-    org_info.to_csv('/Users/alexandraplassaras/src/furever_match/data/output/org_info_' + str(state) +'.csv')
+all_orgs_df = pf.organizations(state=state_list, return_df = True)
+
+########### Org Info #############
+# for state in state_list:
+#     all_orgs_df = pf.organizations(state=state,
+#                                    results_per_page=50,
+#                                    pages=30,
+#                                    return_df = True)
+#     org_info = all_orgs_df[['id',
+#                        'name']]
+#     org_info.to_csv('/Users/alexandraplassaras/src/furever_match/data/output/org_info_' + str(state) +'.csv')
 
 
 ###### Animal Info ##########
@@ -39,4 +41,3 @@ for zipcode in shelter_zipcodes[0]:
     filename = str(today) + '_' + str(zipcode) + '.json'
     s3object = s3.Object('fureverdump', filename)
     s3object.put(Body=(bytes(json.dumps(cats_df).encode('UTF-8'))))
-

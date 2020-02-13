@@ -24,6 +24,8 @@ spark = SparkSession.builder \
 
 sc = spark.sparkContext
 
+
+
 sqlContext = SQLContext(spark)
 
 def find_values(id, json_repr):

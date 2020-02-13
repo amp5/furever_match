@@ -8,21 +8,28 @@ import connect_to_s3 as cs3
 
 s3 = boto3.client('s3')
 
-already_processed = ['2020-01-29_97525.json',
-                        '2020-01-31_97525.json',
-                        '2020-01-28_97525.json',
-                        '2020_01_17_97006.json',
-                        '2020_01_18_97048.json',
-                        '2020_01_18_97013.json',
-                        '2020_01_18_97045.json',
-                        '2020_02_01_97058.json']
+already_processed = [
+              '2020-02-11_CA.json',
+              '2020-02-11_NV.json',
+              '2020-02-11_OR.json',
+              '2020-02-11_TX.json',
+              '2020-02-11_WA.json',
+              'expected_output.json']
 real_raw = []
+fake_raw = []
 for key in s3.list_objects(Bucket='fureverdump')['Contents']:
     if key['Key'][0] == '2' and key['Key'] not in already_processed:
         real_raw.append(key['Key'])
+    elif 'expected_output_' in  key['Key'] and key['Key'] not in already_processed:
+        fake_raw.append(key['Key'])
+#files_to_process = real_raw
 
-files_to_process = real_raw[35:45]
-print(files_to_process)
+
+files_to_process = fake_raw[2:3]
+#print(fake_raw[:100])
+#print(files_to_process)
+
+
 
 for key in files_to_process:
     obj = s3.get_object(Bucket='fureverdump', Key=key)
@@ -53,7 +60,3 @@ for key in files_to_process:
 
 print(files_to_process)
 print(len(files_to_process))
-
-
-
-

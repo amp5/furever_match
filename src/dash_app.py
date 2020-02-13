@@ -1,3 +1,4 @@
+
 import flask
 import dash
 import dash_table
@@ -20,6 +21,8 @@ app = dash.Dash(
 navbar = dbc.NavbarSimple(
     children=[
         dbc.NavItem(dcc.Link('Analysts   ', href='/page-1')),
+        dbc.NavItem(dcc.Link('   ', href='#')),
+        html.Br(),
         dbc.NavItem(dcc.Link('   Engineers', href='/page-2')),
     ],
     brand="Furever Match",
@@ -40,12 +43,10 @@ index_page = html.Div([
     dcc.Link('Engineers', href='/page-2'),
 ])
 
-
 query1 = """select animal_info.coat, animal_info.colors_primary, count(*) as num from animal_info where animal_info.coat is not NULL and animal_info.colors_primary is not NULL group by animal_info.coat, animal_info.colors_primary;"""
 analyst_df = run_query(query1)
 sorted_analyst = analyst_df.sort_values(by='colors_primary')
 hovertemplate1 = "<b>  %{y} and %{x} : %{z} Cats "
-
 
 #### Shelter query
 shelter_q = """
@@ -74,7 +75,7 @@ shelter_q = """
                                 on animal_info.id = animal_medical_info.id
                             where declawed is True
                             group by organization_id) declaw
-                        
+
                         left join
                             (select
                                 organization_id,
@@ -159,8 +160,9 @@ stacked_layout = go.Layout(
 
 stacked_fig = go.Figure(data=stacked_d, layout=stacked_layout)
 
+
 def table_selection(table):
-    if table  == 'temp':
+    if table == 'temp':
         query_selection = """
                 select 
                     *, 
@@ -186,6 +188,7 @@ def table_selection(table):
     clean_eng.columns = ["Column Name", "Number of Null Values", 'Percent Null']
     return clean_eng
 
+
 table_df = table_selection('temp')
 
 page_1_layout = html.Div(children=[
@@ -194,17 +197,17 @@ page_1_layout = html.Div(children=[
             style={
                 'textAlign': 'center',
             }
-    ),
+            ),
     html.Div([
-            html.H4('Shelter Level',
-                    style={
-                        'textAlign': 'center',
-                    }
-                    ),
+        html.H4('Shelter Level',
+                style={
+                    'textAlign': 'center',
+                }
+                ),
     ]),
     html.Div(
-            dcc.Graph(figure=stacked_fig)
-        ),
+        dcc.Graph(figure=stacked_fig)
+    ),
     html.Div([
         html.H4('Animal Level',
                 style={
@@ -240,62 +243,60 @@ page_1_layout = html.Div(children=[
             }
         ),
     ],
-    style={'width': '80%', 'display': 'inline-block', 'vertical-align': 'right'}
+        style={'width': '80%', 'display': 'inline-block', 'vertical-align': 'right'}
     ),
-    ]
+]
 )
 
-
 page_2_layout = html.Div(children=[
-        navbar,
-        html.H1('Engineering Dashboard',
-                style = {
+    navbar,
+    html.H1('Engineering Dashboard',
+            style={
                 'textAlign': 'center',
             }
-        ),
-        html.Br(),
-        html.H4('Select Table'),
-        dcc.Dropdown(id= 'table_dropdown',
-                     options=[
-                         {'label': 'Medical Information', 'value': 'med'},
-                         {'label': 'Animal Information', 'value': 'ani'},
-                         {'label': 'Temperment Information', 'value': 'temp'},
-                         {'label': 'Status Information', 'value': 'stat'},
-                         {'label': 'Animal Description', 'value': 'descr'}
-                     ],
-                     value= 'temp'
-        ),
+            ),
+    html.Br(),
+    html.H4('Select Table'),
+    dcc.Dropdown(id='table_dropdown',
+                 options=[
+                     {'label': 'Medical Information', 'value': 'med'},
+                     {'label': 'Animal Information', 'value': 'ani'},
+                     {'label': 'Temperment Information', 'value': 'temp'},
+                     {'label': 'Status Information', 'value': 'stat'},
+                     {'label': 'Animal Description', 'value': 'descr'}
+                 ],
+                 value='temp'
+                 ),
 
-        html.Br(),
-        dash_table.DataTable(
-            id='table1',
-            columns=[{"name": i, "id": i} for i in table_df.columns],
-            data=table_df.to_dict('records'),
-            sort_action="native",
-            style_cell={'textAlign': 'center'},
-            style_header={
-                'backgroundColor': 'white',
-                'fontWeight': 'bold'
-            },
-            style_cell_conditional=[
-                    {
-                        'if': {'column_id': 'Column Name'},
-                        'textAlign': 'left'
-                    }
-                ]
+    html.Br(),
+    dash_table.DataTable(
+        id='table1',
+        columns=[{"name": i, "id": i} for i in table_df.columns],
+        data=table_df.to_dict('records'),
+        sort_action="native",
+        style_cell={'textAlign': 'center'},
+        style_header={
+            'backgroundColor': 'white',
+            'fontWeight': 'bold'
+        },
+        style_cell_conditional=[
+            {
+                'if': {'column_id': 'Column Name'},
+                'textAlign': 'left'
+            }
+        ]
 
-        ),
+    ),
 
-        dcc.Link('Go back to home', href='/')
-    ],
+    dcc.Link('Go back to home', href='/')
+],
     style={'padding': '10px 40px 40px 40px'}
 )
 
 
 @app.callback(dash.dependencies.Output('table1', 'figure'),
-            [dash.dependencies.Input('table_dropdown', 'value')])
+              [dash.dependencies.Input('table_dropdown', 'value')])
 def update_output(table_opt):
-
     return table_opt
 
 
@@ -303,6 +304,7 @@ def update_output(table_opt):
               [dash.dependencies.Input('page-1-dropdown', 'value')])
 def page_1_dropdown(value):
     return 'You have selected "{}"'.format(value)
+
 
 @app.callback(dash.dependencies.Output('page-2-content', 'children'),
               [dash.dependencies.Input('page-2-radios', 'value')])
@@ -324,6 +326,8 @@ def display_page(pathname):
 
 if __name__ == '__main__':
     app.run_server(debug=True, host='0.0.0.0', port=8080)
+
+
 
 
 
