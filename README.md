@@ -1,5 +1,7 @@
-# Furever Match
 
+
+![](https://github.com/amp5/furever_match/blob/master/reports/pictures/giphy.gif)
+# Furever Match
 
 ## Project Idea
 My goal for this project was to create a tool that would enable animal shelters access to the insights of the their data. Whether that be a volunteer at the shelter, an analyst of data scientist at a larger non-profit like ASPCA or the engineers who help keep everything running. My focus of this project was on cat adoption data using Petfinder's national adoption data API and building the architecture for a tool that would support not only large amounts of data but also various kinds of data. The ultimate goal being to help kitties everywhere find their furever homes 😻.
