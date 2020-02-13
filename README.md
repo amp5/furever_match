@@ -17,7 +17,7 @@ Tools: AWS S3, AWS EC2, Apache Spark SQL, PostgreSQL, Flask, Dash
 This project was built using the above tools. First I called Petfinder's API to extract data on current cat adoptions and store raw JSON files into AWS S3. From there I used Spark to extract, transform and load data from AWS S3 to Postgres using Spark's main features as well as Spark SQL to query and analyze the data. Throughout this process JSON data was transformed into dataframe, normalized and condenced into multiple tables in Postgres. This pipeline was also deployed on AWS EC2 and the resulting information found in Postgres was visualized in a Flask web application using Dash for visualizations. 
 
 
-## What I would like to work on next with Furever Match
+## What's next for Furever Match
 - Incorporate Airflow into this to call Petfinder API daily or 2x a day. 
 - Add additional data sources, perhaps hyper local datasets from shelters.
 - Build out historical snapshots of data to track progression of cat profiles over time.
