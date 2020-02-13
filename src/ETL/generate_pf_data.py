@@ -20,7 +20,7 @@ name_list = ['Oscar', 'Max', 'Tiger', 'Sam', 'Misty',
             'Zoe', 'Phoebe', 'Tom', 'Lilly', 'Sylvester',
             'George', 'Kimba', 'Harry', 'Holly', 'Minnie',
             'Tsuke']
-state_pd = pd.read_csv('/Users/alexandraplassaras/src/furever_match/data/input/abbr-list.csv')
+state_pd = pd.read_csv('/data/input/abbr-list.csv')
 
 
 def generate(key, num):
