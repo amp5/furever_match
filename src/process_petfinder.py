@@ -1,12 +1,13 @@
 import boto3
-import pandas as pd
-from pyspark.sql import SparkSession
-from pyspark.sql.types import *
-from pyspark.sql import DataFrameWriter
-from write_to_postgres import write_to_psql
 import connect_to_s3 as cs3
+import json
+import os
+import pandas as pd
+from write_to_postgres import write_to_psql
+
 
 s3 = boto3.client('s3')
+s3r = boto3.resource('s3')
 
 already_processed = [
               '2020-02-11_CA.json',
@@ -14,52 +15,94 @@ already_processed = [
               '2020-02-11_OR.json',
               '2020-02-11_TX.json',
               '2020-02-11_WA.json',
+              '2020-02-11_K4B 1H9.json',
+              '2020-02-11_M4M 2G3.json',
+                '2020-01-28_97138.json',
+                '2020-01-29_89019.json',
+                '2020-01-29_97138.json',
+                '2020-01-31_97138.json',
+                '2020-02-01_97138.json',
+                '2020-02-03_97138.json',
+                '2020-02-04_97138.json',
+                '2020-02-09_97138.json',
+                '2020-02-11_89019.json',
+                '2020-02-12_89019.json',
+                '2020-02-13_89019.json',
+                '2020-02-14_89019.json',
+                '2020-02-11_89447.json',
+                '2020-02-12_89447.json',
+                '2020-02-13_89449.json',
+                '2020-02-14_89447.json',
+                '2020-02-12_89429.json',
+                '2020-02-13_89429.json',
+                '2020-02-14_89429.json',
+                '2020-02-13_89447.json',
+                '2020-02-14_89447.json',
+                '2020-02-15_89447.json',
+                '2020-02-15_89429.json',
               'expected_output.json']
-real_raw = []
-fake_raw = []
+
+# # downloads files into data directory on EC2
+my_bucket = s3r.Bucket('fureverdump')
+for s3_object in my_bucket.objects.all():
+    # Need to split s3_object.key into path and file name, else it will give error file not found.
+    path, filename = os.path.split(s3_object.key)
+    if filename not in already_processed:
+        my_bucket.download_file(s3_object.key, filename)
+
+
+# loops through files downloaded onto EC2
+# directory = os.fsencode('/home/ubuntu/data_files')
+# raw_files = []
+# for file in os.listdir(directory):
+#      filename = os.fsdecode(file)
+#      if filename.endswith(".json"):
+#          raw_files.append(filename)
+#          continue
+#      else:
+#          continue
+
+
 for key in s3.list_objects(Bucket='fureverdump')['Contents']:
-    if key['Key'][0] == '2' and key['Key'] not in already_processed:
-        real_raw.append(key['Key'])
-    elif 'expected_output_' in  key['Key'] and key['Key'] not in already_processed:
-        fake_raw.append(key['Key'])
-#files_to_process = real_raw
-#print(files_to_process)
-#print(len(real_raw))
+    path = key['Key']
+    print("working on file:" + path)
+    if key['Key'][0] == '2' and key['Key'] not in already_processed and '2020-02-15' in key['Key']:
+
+        write_to_psql(cs3.spk_temp(path), 'animal_temperment')
+        print("Data inserted to Postgres: Temperment")
+
+        write_to_psql(cs3.spk_med(path), 'animal_medical_info')
+        print("Data inserted to Postgres: Medical")
+
+        write_to_psql(cs3.spk_descr(path), 'animal_description')
+        print("Data inserted to Postgres: Description")
+
+        write_to_psql(cs3.spk_status(path), 'animal_status')
+        print("Data inserted to Postgres: Status")
+
+        write_to_psql(cs3.spk_ani(path), 'animal_info')
+        print("Data inserted to Postgres: Info")
+
+    # if 'expected_output_' in  key['Key'] and key['Key'] not in already_processed:
+    #     write_to_psql(cs3.spk_temp(path), 'animal_temperment')
+    #     print("Data inserted to Postgres: Temperment")
+    # 
+    #     write_to_psql(cs3.spk_med(path), 'animal_medical_info')
+    #     print("Data inserted to Postgres: Medical")
+    # 
+    #     write_to_psql(cs3.spk_descr(path), 'animal_description')
+    #     print("Data inserted to Postgres: Description")
+    # 
+    #     write_to_psql(cs3.spk_status(path), 'animal_status')
+    #     print("Data inserted to Postgres: Status")
+    # 
+    #     write_to_psql(cs3.spk_ani(path), 'animal_info')
+    #     print("Data inserted to Postgres: Info")
 
 
 
-files_to_process = fake_raw[3:10]
-#print(fake_raw[:100])
-#print(files_to_process)
 
 
 
-for key in files_to_process:
-    obj = s3.get_object(Bucket='fureverdump', Key=key)
-    text = obj["Body"].read().decode()
 
 
-    med_info = cs3.spk_med(text)
-    print('processed med -------------------------')
-    animal_info = cs3.spk_ani(text)
-    print('processed ani -------------------------')
-    description_info = cs3.spk_descr(text)
-    print('processed desc -------------------------')
-    status_info = cs3.spk_status(text)
-    print('processed stat -------------------------')
-    temperment_info = cs3.spk_temp(text)
-    print('processed temp -------------------------')
-
-    write_to_psql(med_info, 'animal_medical_info')
-    print('written to db! - med')
-    print("now what?")
-    write_to_psql(animal_info, 'animal_info')
-    print('written to db! - info')
-    write_to_psql(description_info, 'animal_description')
-    print('written to db! - desc')
-    write_to_psql(status_info, 'animal_status')
-    print('written to db! - stat')
-    write_to_psql(temperment_info, 'animal_temperment')
-
-print(files_to_process)
-print(len(files_to_process))

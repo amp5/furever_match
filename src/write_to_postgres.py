@@ -9,7 +9,7 @@ def write_to_psql(df, table):
     """ input is spark dataframe and the postgres table df needs to be written to """
 
     # modes are 'overwrite', 'append', 'ignore', 'error', 'errorifexists'
-    mode = "overwrite"
+    mode = "append"
     url = "jdbc:postgresql://database-1.cu3ixi7c6kol.us-west-2.rds.amazonaws.com:5432/postgres"
     properties = {"user": "postgres",
                   "password": "fureverdb",
