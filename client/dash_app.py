@@ -9,26 +9,28 @@ from dash.dependencies import Input, Output
 import plotly.express as px
 import plotly.graph_objs as go
 from access_db import *
+from queries import *
 
 server = flask.Flask(__name__)
 app = dash.Dash(
     __name__,
     server=server,
-    # routes_pathname_prefix='/',
     external_stylesheets=[dbc.themes.BOOTSTRAP]
 )
 
 navbar = dbc.NavbarSimple(
     children=[
         dbc.NavItem(dcc.Link('Analysts   ', href='/page-1')),
-        dbc.NavItem(dcc.Link('   ', href='#')),
-        html.Br(),
         dbc.NavItem(dcc.Link('   Engineers', href='/page-2')),
     ],
     brand="Furever Match",
     brand_href="#",
     sticky="top",
 )
+
+
+
+
 
 app.config.suppress_callback_exceptions = True
 
@@ -37,13 +39,38 @@ app.layout = html.Div([
     html.Div(id='page-content')
 ])
 
+
+app.layout = html.Div([
+    dcc.Tabs(id="tabs", value='tab-1', children=[
+        dcc.Tab(label='Tab one', value='tab-1'),
+        dcc.Tab(label='Tab two', value='tab-2'),
+    ]),
+    html.Div(id='tabs-content')
+])
+
+@app.callback(Output('tabs-content', 'children'),
+              [Input('tabs', 'value')])
+def render_content(tab):
+    if tab == 'tab-1':
+        return html.Div([
+            html.H3('Tab content 1'),
+            html.H4('yo')
+        ])
+    elif tab == 'tab-2':
+        return html.Div([
+            html.H3('Tab content 2')
+        ])
+
+
+
 index_page = html.Div([
     dcc.Link('Analysts', href='/page-1'),
     html.Br(),
     dcc.Link('Engineers', href='/page-2'),
 ])
 
-query1 = """select animal_info.coat, animal_info.colors_primary, count(*) as num from animal_info where animal_info.coat is not NULL and animal_info.colors_primary is not NULL group by animal_info.coat, animal_info.colors_primary;"""
+query1 = get_data("coat_variations")
+# query1 = """select animal_info.coat, animal_info.colors_primary, count(*) as num from animal_info where animal_info.coat is not NULL and animal_info.colors_primary is not NULL group by animal_info.coat, animal_info.colors_primary;"""
 analyst_df = run_query(query1)
 sorted_analyst = analyst_df.sort_values(by='colors_primary')
 hovertemplate1 = "<b>  %{y} and %{x} : %{z} Cats "
@@ -284,13 +311,14 @@ page_2_layout = html.Div(children=[
                 'if': {'column_id': 'Column Name'},
                 'textAlign': 'left'
             }
-        ]
+        ],
 
     ),
 
+
     dcc.Link('Go back to home', href='/')
 ],
-    style={'padding': '10px 40px 40px 40px'}
+    # style={'padding': '10% 10% 10% 10%'}
 )
 
 
