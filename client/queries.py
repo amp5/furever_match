@@ -237,6 +237,41 @@ def get_data(request):
                     """
         return query
 
+    if request == 'indiv_cat':
+
+        query = """
+                    select
+                        l.name,
+                        a.id,
+                        a.size,
+                        l.age_group,
+                        l.age,
+                        a.gender,
+                        l.gender,
+                        a.breeds_primary,
+                        l.breed,
+                        a.colors_primary,
+                        a.coat,
+                        l.temperament
+            
+                    from local_info as l
+                    left join (select 
+                                    distinct id,  
+                                    animal_info.name, 
+                                    animal_info.size,
+                                    gender, 
+                                    breeds_primary, 
+                                    colors_primary,
+                                    coat 
+                                from animal_info 
+                                where organization_id like 'WA%'
+                                    and animal_info.name in (select local_info.name from local_info)) a
+                    on l.name = a.name
+                    and l.gender = a.gender
+                    where a.id is not null
+        """
+        return query
+
 
     else:
         raise Exception('Your request is not currently supported')

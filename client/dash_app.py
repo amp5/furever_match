@@ -11,6 +11,7 @@ import plotly.graph_objs as go
 from access_db import *
 from queries import *
 
+
 server = flask.Flask(__name__)
 app = dash.Dash(
     __name__,
@@ -20,12 +21,18 @@ app = dash.Dash(
 
 
 app.layout = html.Div([
-    dcc.Tabs(id="tabs", value='tab-1', children=[
+    dcc.Tabs(id="tabs", value='tab-3', children=[
+        dcc.Tab(label='Cat Profile Info', value='tab-3'),
         dcc.Tab(label='Analysis Dashboard', value='tab-1'),
         dcc.Tab(label='Engineering Dashboard', value='tab-2'),
     ]),
     html.Div(id='tabs-content')
 ])
+
+
+indiv_cats = run_query(get_data("indiv_cat"))
+
+
 
 analyst_df = run_query(get_data("coat_variations"))
 sorted_analyst = analyst_df.sort_values(by='colors_primary')
@@ -168,10 +175,32 @@ page_2_layout = html.Div(children=[
 )
 
 
+page_3_layout = html.Div(children=[
+    html.H3('Cat Information'),
+    dash_table.DataTable(
+        id='table1',
+        columns=[{"name": i, "id": i} for i in indiv_cats.columns],
+        data=indiv_cats.to_dict('records'),
+        sort_action="native",
+        style_cell={'textAlign': 'center'},
+        style_header={
+            'backgroundColor': 'white',
+            'fontWeight': 'bold'
+        },
+        style_table={'overflowX': 'scroll'}
+    ),
+],
+ style={'padding': '10%'}
+)
+
+
+
 @app.callback(Output('tabs-content', 'children'),
               [Input('tabs', 'value')])
 def render_content(tab):
-    if tab == 'tab-1':
+    if tab == 'tab-3':
+        return html.Div(page_3_layout)
+    elif tab == 'tab-1':
         return html.Div(page_1_layout)
     elif tab == 'tab-2':
         return html.Div([

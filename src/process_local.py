@@ -6,7 +6,7 @@ from pyspark import SparkContext
 from pyspark.conf import SparkConf
 from pyspark.sql import SparkSession, DataFrame, DataFrameWriter, Row, SQLContext
 from pyspark.sql.types import *
-from pyspark.sql.functions import col, when, split, expr, lit, substring, length, regexp_replace, trim, round, coalesce
+from pyspark.sql.functions import col, when, split, expr, substring, regexp_replace, trim, round
 from pyspark.sql import functions as F
 from write_to_postgres import write_to_psql
 
