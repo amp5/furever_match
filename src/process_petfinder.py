@@ -54,7 +54,8 @@ already_processed = [
     'expected_output_10380.json',
     'expected_output_10437.json',
     'expected_output_10506.json',
-              'expected_output.json']
+              'expected_output.json',
+    'Lost__found__adoptable_pets.csv']
 
 # # # downloads files into data directory on EC2
 # my_bucket = s3r.Bucket('fureverdump')
