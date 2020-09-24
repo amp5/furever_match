@@ -11,6 +11,9 @@
 My goal for this project was to create a tool that would enable animal shelters access to the insights of the their data. Whether that be a volunteer at the shelter, an analyst of data scientist at a larger non-profit like ASPCA or the engineers who help keep everything running. My focus of this project was on cat adoption data using Petfinder's national adoption data API and building the architecture for a tool that would support not only large amounts of data but also various kinds of data. The ultimate goal being to help kitties everywhere find their furever homes 😻.
 
 
+[Click here for presentation](https://docs.google.com/presentation/d/1cBu7sn-bg4zWhmF2XyfrUGu4XRyKzhXw9viQnakvEFk/edit?usp=sharing)
+
+
 ## Tech Stack
 Tools: AWS S3, AWS EC2, Apache Spark SQL, PostgreSQL, Flask, Dash
 
