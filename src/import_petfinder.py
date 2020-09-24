@@ -5,8 +5,8 @@ from datetime import date
 
 s3 = boto3.resource('s3')
 
-PETFINDER_KEY='FGqq3oNQHnOIF55N8Y947T83vEa3R7WvXzZUpJDrJjw5FuW1dr'
-PETFINDER_SECRET='HK9loGC6r1FoAlqiKnJmght8UafzgGZcoL533eWM'
+PETFINDER_KEY=[KEY]
+PETFINDER_SECRET=[SECRET]
 
 
 pf = petpy.Petfinder(key=PETFINDER_KEY, secret=PETFINDER_SECRET)
