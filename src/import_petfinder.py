@@ -5,6 +5,7 @@ from datetime import date
 
 s3 = boto3.resource('s3')
 
+# API
 PETFINDER_KEY=[KEY]
 PETFINDER_SECRET=[SECRET]
 
@@ -17,17 +18,6 @@ state_list = ['WA', 'OR', 'CA', 'TX', 'NV']
 all_orgs_df = pf.organizations(state=state_list, return_df = True)
 
 corrupted_zips = ['89447', '89429', '89019', '97138']
-
-########### Org Info #############
-# for state in state_list:
-#     all_orgs_df = pf.organizations(state=state,
-#                                    results_per_page=50,
-#                                    pages=30,
-#                                    return_df = True)
-#     org_info = all_orgs_df[['id',
-#                        'name']]
-#     org_info.to_csv('/Users/alexandraplassaras/src/furever_match/data/output/org_info_' + str(state) +'.csv')
-
 
 ###### Animal Info ##########
 shelter_zipcodes = []
